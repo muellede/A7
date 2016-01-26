@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.util.Set;
 
 import org.dbunit.IDatabaseTester;
 import org.dbunit.JdbcDatabaseTester;
@@ -12,25 +13,28 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.hrw.swep.biblio.persistence.dto.BenutzerDTO;
+import de.hrw.swep.biblio.persistence.dto.BuchDTO;
 
 /**
  * Testklasse fuer den Datenbankzugriff
+ * 
  * @author M. Friedrich
  *
  */
 public class DAOTest {
 
   IDatabaseTester databaseTester;
-  
+
   /**
    * Bringt die Datenbank in einen definierten Ausgangszustand
-   * @throws Exception 
+   * 
+   * @throws Exception
    */
   @Before
   public void setup() throws Exception {
     databaseTester = new JdbcDatabaseTester("org.hsqldb.jdbcDriver",
         "jdbc:hsqldb:file:../biblio-db/database/bibdb", "sa", "");
-    databaseTester.setSetUpOperation(new HsqlDatabaseOperation());
+    // databaseTester.setSetUpOperation(new HsqlDatabaseOperation());
     databaseTester.setDataSet(new FlatXmlDataSetBuilder().build(new File("full.xml")));
     databaseTester.onSetup();
   }
@@ -51,15 +55,24 @@ public class DAOTest {
    */
   @Test
   public void testGetBenutzerByName() {
-    fail();
+    DAO dao = new DAO();
+    Set<BenutzerDTO> b = dao.getBenutzerByName("Adalbert Alt");
+    assertEquals(1, b.size());
+    BenutzerDTO a = b.iterator().next();
+    assertEquals(1, a.getId());
   }
 
-  /** 
+  /**
    * Testet das Abrufen aller Buecher eines Autors
    */
   @Test
   public void testGetBuchByAutor() {
-    fail();
+    DAO dao = new DAO();
+    Set<BuchDTO> b = dao.getBuchByAutor("Karl Kaos");
+    assertEquals(1, b.size());
+    BuchDTO a = b.iterator().next();
+    assertEquals(1, a.getId());
+    assertEquals("Lost and Found", a.getTitel());
   }
 
   /**
@@ -67,6 +80,12 @@ public class DAOTest {
    */
   @Test
   public void testGetBuchByTitle() {
-    fail();
+    DAO dao = new DAO();
+    Set<BuchDTO> b = dao.getBuchByTitle("Lost and Found");
+    assertEquals(1, b.size());
+    BuchDTO a = b.iterator().next();
+    assertEquals("Karl Kaos", a.getAutor());
+    assertEquals(1, a.getId());
+
   }
 }
